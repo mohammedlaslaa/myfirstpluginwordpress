@@ -20,21 +20,20 @@ function send_message()
         $wpdb->insert("wp_message", ['object' => esc_html($_POST['object']), 'email' => esc_html($_POST['email']), 'message' => esc_html($_POST['message'])]);
     }
 
-    $text = "<form method='POST' class='col-4 mx-auto formsendmessage'>
-            <div class='form-group'>
-                <label for='object'>Objet</label>
-                <input type='text' class='form-control' name='object' id='object'>
+    $text = "<form method='POST' class='formsendmessage'>
+                <div>
+                    <label for='object'>Objet</label>
+                    <input type='text' name='object' id='object'>
+                </div>
+                <div>
+                    <label for='email'>Email</label>
+                    <input type='text' class='emailsend' name='email' id='email' placeholder='Entrez un email'>
+                </div>
+                <div>
+                    <label for='message'>Message</label>
+                    <textarea type='text' name='message' id='message'></textarea>
             </div>
-            <div class='form-group'>
-                <label for='email'>Email</label>
-                <input type='text' class='form-control emailsend' name='email' id='email' placeholder='Entrez un email'>
-            </div>
-            <div class='form-group'>
-                <label for='message'>Message</label>
-                <textarea type='text' class='form-control' name='message' id='message'>
-                </textarea>
-            </div>
-            <button type='submit' class='btn btn-primary mt-5'>Contacter</button>
+            <button type='submit'>Contacter</button>
         </form>";
 
     echo $text;
@@ -51,12 +50,12 @@ function form_to_send()
         <?php
         settings_fields('wporg_options');
         do_settings_sections('wporg');
-        echo "<table class='lm_messagetable'>
+        echo "<table class='lm_messagetable table-bordered table-striped'><thead>
                 <tr>
                     <th>Objet</th>
                     <th>Email</th>
                     <th>Message</th>
-                </tr>";
+                </tr></thead><tbody>";
         global $wpdb;
         $results = $wpdb->get_results("SELECT * FROM wp_message WHERE 1");
         $show = "";
@@ -64,18 +63,39 @@ function form_to_send()
             $show .= "<tr>";
             foreach ($table as $key => $value) {
                 if ($key !== "id") {
-                    $show .= "<th>$value</th>";
+                    $show .= "<td>$value</td>";
                 }
             }
             $show .= "</tr>";
         }
-
-        $show .= "</table>";
+        $show .= "</tbody></table>";
         echo $show;
         ?>
     </div>
 <?php
 }
+
+function message_css()
+{
+    echo "
+    <style type='text/css'>
+    
+	.lm_messagetable {
+        width: 100%;
+    }
+
+    .lm_messagetable thead th{
+        padding : 10px;
+    }
+    
+    .lm_messagetable tbody td{
+        padding : 10px;
+    }
+	</style>
+	";
+}
+
+add_action('admin_head', 'message_css');
 
 function message_options_page()
 {
@@ -120,26 +140,6 @@ register_activation_hook(__FILE__, 'activate');
 register_deactivation_hook(__FILE__, 'desactivate');
 add_action('admin_menu', 'message_options_page');
 
-function message_css()
-{
-    echo "
-    <style type='text/css'>
-    
-	.lm_messagetable {
-        color : black;
-        background-color: white;
-        width: 100%;
-    }
-
-    .lm_messagetable th{
-        padding : 10px;
-    }
-	</style>
-	";
-}
-
-add_action('admin_head', 'message_css');
-
 // echo plugin_dir_url(__FILE__)  .  'messagesend.js';
 
 function wptuts_scripts_basic()
@@ -150,3 +150,4 @@ function wptuts_scripts_basic()
 }
 
 add_action('wp_enqueue_scripts', 'wptuts_scripts_basic');
+wp_enqueue_style('bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css');
