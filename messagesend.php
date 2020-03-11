@@ -84,11 +84,11 @@ function message_css()
         width: 100%;
     }
 
-    .lm_messagetable thead th{
+    .lm_messagetable th{
         padding : 10px;
     }
     
-    .lm_messagetable tbody td{
+    .lm_messagetable td{
         padding : 10px;
     }
 	</style>
